@@ -86,6 +86,24 @@ app.delete('/notes/:id', (req, res) => {
   res.status(204).end()
 })
 
+//ask
+app.put('/notes/:id', (req, res) => {
+  const updatednote = req.body
+  notes.splice(
+    notes.findIndex((item) => item.id === updatednote.id),
+    1,
+    updatednote
+  )
+  res.json(updatednote)
+  console.log(notes)
+  // const id = +req.params.id
+  // notes = notes.map((note) =>
+  //   note.id === id ? { ...note, important: !note.important } : note
+  // )
+  // const updatednote = notes.find((note) => note.id === id)
+  // res.json(updatednote)
+})
+
 const error = (req, res, next) => {
   res.status(404).send({ error: 'unknown endpoint' })
   next()
