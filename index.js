@@ -3,6 +3,7 @@ const app = express()
 const bodyParser = require('body-parser')
 const cors = require('cors')
 
+app.use(express.static('build'))
 app.use(cors())
 app.use(bodyParser.json())
 
@@ -95,7 +96,7 @@ app.put('/notes/:id', (req, res) => {
     updatednote
   )
   res.json(updatednote)
-  console.log(notes)
+
   // const id = +req.params.id
   // notes = notes.map((note) =>
   //   note.id === id ? { ...note, important: !note.important } : note
