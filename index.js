@@ -45,7 +45,7 @@ const generateId = () => {
   return maxId + 1
 }
 
-app.post('/notes', (req, res) => {
+app.post('/api/notes', (req, res) => {
   const body = req.body
 
   if (body.content === undefined) {
