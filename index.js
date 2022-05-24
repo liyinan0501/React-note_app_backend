@@ -67,7 +67,7 @@ app.get('/', (req, res) => {
   res.send(`<h1>Hello World!</h1>`)
 })
 
-app.get('/notes', (req, res) => {
+app.get('/api/notes', (req, res) => {
   res.json(notes)
 })
 
