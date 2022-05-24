@@ -71,7 +71,7 @@ app.get('/api/notes', (req, res) => {
   res.json(notes)
 })
 
-app.get('/notes/:id', (req, res) => {
+app.get('/api/notes/:id', (req, res) => {
   const id = +req.params.id
   const note = notes.find((note) => note.id === id)
   if (note) {
@@ -81,14 +81,14 @@ app.get('/notes/:id', (req, res) => {
   }
 })
 
-app.delete('/notes/:id', (req, res) => {
+app.delete('/api/notes/:id', (req, res) => {
   const id = +req.params.id
   notes = notes.filter((note) => note.id !== id)
   res.status(204).end()
 })
 
 //ask
-app.put('/notes/:id', (req, res) => {
+app.put('/api/notes/:id', (req, res) => {
   const updatednote = req.body
   notes.splice(
     notes.findIndex((item) => item.id === updatednote.id),
