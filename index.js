@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const cors = require('cors')
+const Note = require('./models/note')
 
 app.use(express.static('build'))
 app.use(cors())
@@ -45,6 +46,21 @@ const generateId = () => {
   return maxId + 1
 }
 
+const formatNote = (note) => {
+  const formattedNote = { ...note._doc, id: note.id }
+  delete formattedNote._id
+  delete formattedNote.__v
+  return formattedNote
+}
+
+app.get('/api/notes', (req, res) => {
+  Note.find({}).then((notes) => res.json(notes.map(formatNote)))
+})
+
+app.get('/api/notes/:id', (req, res) => {
+  Note.findById(req.params.id).then((note) => res.json(formatNote(note)))
+})
+
 app.post('/api/notes', (req, res) => {
   const body = req.body
 
@@ -52,52 +68,48 @@ app.post('/api/notes', (req, res) => {
     return res.status(400).json({ error: 'content missing' })
   }
 
-  const note = {
-    id: generateId(),
+  const note = new Note({
     content: body.content,
-    date: new Date(),
     important: body.important || false,
-  }
+    date: new Date(),
+  })
 
-  notes = notes.concat(note)
-  res.json(note)
-})
+  note.save().then((savedNote) => res.json(formatNote(savedNote)))
 
-app.get('/api/notes', (req, res) => {
-  res.json(notes)
-})
+  // const note = {
+  //   id: generateId(),
+  //   content: body.content,
+  //   date: new Date(),
+  //   important: body.important || false,
+  // }
 
-app.get('/api/notes/:id', (req, res) => {
-  const id = +req.params.id
-  const note = notes.find((note) => note.id === id)
-  if (note) {
-    res.json(note)
-  } else {
-    res.status(404).end()
-  }
+  // notes = notes.concat(note)
+  // res.json(note)
 })
 
 app.delete('/api/notes/:id', (req, res) => {
-  const id = +req.params.id
-  notes = notes.filter((note) => note.id !== id)
-  res.status(204).end()
+  Note.findByIdAndRemove(req.params.id).then((result) => res.status(204).end())
+
+  // notes = notes.filter((note) => note.id !== id)
+  // res.status(204).end()
 })
 
-//ask
 app.put('/api/notes/:id', (req, res) => {
-  const updatednote = req.body
-  notes.splice(
-    notes.findIndex((item) => item.id === updatednote.id),
-    1,
-    updatednote
-  )
-  res.json(updatednote)
+  const body = req.body
 
-  // const id = +req.params.id
-  // notes = notes.map((note) =>
-  //   note.id === id ? { ...note, important: !note.important } : note
+  const note = {
+    content: body.content,
+    important: body.important,
+  }
+  Note.findByIdAndUpdate(req.params.id, note, { new: true }).then(
+    (updatedNote) => res.json(formatNote(updatedNote))
+  )
+  // const updatednote = req.body
+  // notes.splice(
+  //   notes.findIndex((item) => item.id === updatednote.id),
+  //   1,
+  //   updatednote
   // )
-  // const updatednote = notes.find((note) => note.id === id)
   // res.json(updatednote)
 })
 
@@ -106,7 +118,7 @@ const error = (req, res, next) => {
   next()
 }
 app.use(error)
-app.use(express.static('build'))
+
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
