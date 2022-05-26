@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const url =
-  'mongodb+srv://yinanli:46003700Yinan@cluster0.gpqhj.mongodb.net/fullstack-notes'
+  'mongodb+srv://yinanli:yinanli123@cluster0.gpqhj.mongodb.net/fullstack-notes'
 
 mongoose.connect(url)
 
